@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+coverage
+.env*
+data/practice-history.jsonl
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
