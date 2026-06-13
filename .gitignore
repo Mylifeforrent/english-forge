@@ -2,6 +2,7 @@ node_modules
 .next
 out
 coverage
+tsconfig.tsbuildinfo
 .env*
 data/practice-history.jsonl
 npm-debug.log*
