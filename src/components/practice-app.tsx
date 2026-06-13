@@ -102,8 +102,8 @@ export function PracticeApp({
       <section className="workspace" aria-label="English Forge practice">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Chinese to English output trainer</p>
             <h1>English Forge</h1>
+            <p className="subhead">Chinese to English output practice</p>
           </div>
           <div className="stats" aria-label="Practice stats">
             <span>{questions.length} prompts</span>
