@@ -21,6 +21,15 @@ const categoryLabels: Record<Category, string> = {
   ielts: "IELTS"
 };
 
+function formatRecordTime(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(value));
+}
+
 async function saveAttempt(record: HistoryRecordInput): Promise<HistoryRecord> {
   const response = await fetch("/api/history", {
     method: "POST",
@@ -59,6 +68,7 @@ export function PracticeApp({
   }, [category, questions]);
 
   const activeQuestion = filteredQuestions[questionIndex % filteredQuestions.length] ?? questions[0];
+  const progressLabel = `${(questionIndex % filteredQuestions.length) + 1} / ${filteredQuestions.length}`;
 
   function selectCategory(nextCategory: Category) {
     setCategory(nextCategory);
@@ -113,6 +123,14 @@ export function PracticeApp({
 
         <div className="layout">
           <section className="practice-panel">
+            <div className="section-head">
+              <div>
+                <p className="section-kicker">Current prompt</p>
+                <p className="section-title">Translate the meaning, then compare.</p>
+              </div>
+              <span className="progress">{progressLabel}</span>
+            </div>
+
             <nav className="filters" aria-label="Question categories">
               {categories.map((item) => (
                 <button
@@ -135,15 +153,17 @@ export function PracticeApp({
               <p className="prompt">{activeQuestion.prompt}</p>
             </article>
 
-            <label className="answer-label" htmlFor="answer">
-              Your English translation
-            </label>
-            <textarea
-              id="answer"
-              value={answer}
-              onChange={(event) => setAnswer(event.target.value)}
-              placeholder="Type your English sentence here..."
-            />
+            <div className="writing-block">
+              <label className="answer-label" htmlFor="answer">
+                Your English translation
+              </label>
+              <textarea
+                id="answer"
+                value={answer}
+                onChange={(event) => setAnswer(event.target.value)}
+                placeholder="Type your English sentence here..."
+              />
+            </div>
 
             <div className="actions">
               <button type="button" onClick={() => setRevealed(true)}>
@@ -168,12 +188,20 @@ export function PracticeApp({
 
             {revealed ? (
               <section className="answer-panel" aria-label="Reference answer">
-                <p className="answer-title">Reference answer</p>
-                <p className="reference">{activeQuestion.referenceAnswer}</p>
-                <p className="answer-title">Alternative</p>
-                <p>{activeQuestion.alternatives[0]}</p>
-                <p className="answer-title">Phrase note</p>
-                <p>{activeQuestion.notes[0]}</p>
+                <div>
+                  <p className="answer-title">Reference</p>
+                  <p className="reference">{activeQuestion.referenceAnswer}</p>
+                </div>
+                <div className="answer-grid">
+                  <div>
+                    <p className="answer-title">Alternative</p>
+                    <p>{activeQuestion.alternatives[0]}</p>
+                  </div>
+                  <div>
+                    <p className="answer-title">Phrase note</p>
+                    <p>{activeQuestion.notes[0]}</p>
+                  </div>
+                </div>
               </section>
             ) : null}
           </section>
@@ -189,7 +217,11 @@ export function PracticeApp({
               <ul>
                 {history.map((record) => (
                   <li key={record.id}>
-                    <span>{categoryLabels[record.category]}</span>
+                    <div className="history-meta">
+                      <span>{categoryLabels[record.category]}</span>
+                      <span>{formatRecordTime(record.createdAt)}</span>
+                      {record.markedForReview ? <strong>Review</strong> : null}
+                    </div>
                     <p>{record.prompt}</p>
                     <small>{record.userAnswer}</small>
                   </li>
