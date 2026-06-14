@@ -70,21 +70,38 @@ export function PracticeApp({
   const activeQuestion = filteredQuestions[questionIndex % filteredQuestions.length] ?? questions[0];
   const progressLabel = `${(questionIndex % filteredQuestions.length) + 1} / ${filteredQuestions.length}`;
 
-  function selectCategory(nextCategory: Category) {
-    setCategory(nextCategory);
-    setQuestionIndex(0);
+  function resetPracticeState() {
     setAnswer("");
     setRevealed(false);
     setMarkedForReview(false);
     setStatus("");
   }
 
+  function selectCategory(nextCategory: Category) {
+    setCategory(nextCategory);
+    setQuestionIndex(0);
+    resetPracticeState();
+  }
+
+  function goToPreviousQuestion() {
+    setQuestionIndex((current) => (current - 1 + filteredQuestions.length) % filteredQuestions.length);
+    resetPracticeState();
+  }
+
   function goToNextQuestion() {
     setQuestionIndex((current) => (current + 1) % filteredQuestions.length);
-    setAnswer("");
-    setRevealed(false);
-    setMarkedForReview(false);
-    setStatus("");
+    resetPracticeState();
+  }
+
+  function selectQuestion(questionId: string) {
+    const nextIndex = filteredQuestions.findIndex((question) => question.id === questionId);
+
+    if (nextIndex === -1) {
+      return;
+    }
+
+    setQuestionIndex(nextIndex);
+    resetPracticeState();
   }
 
   async function handleSave() {
@@ -144,6 +161,29 @@ export function PracticeApp({
               ))}
             </nav>
 
+            <div className="prompt-nav" aria-label="Prompt navigation">
+              <button type="button" onClick={goToPreviousQuestion}>
+                Previous prompt
+              </button>
+              <label className="question-picker">
+                <span>Choose prompt</span>
+                <select
+                  aria-label="Choose prompt"
+                  value={activeQuestion.id}
+                  onChange={(event) => selectQuestion(event.target.value)}
+                >
+                  {filteredQuestions.map((question, index) => (
+                    <option key={question.id} value={question.id}>
+                      {String(index + 1).padStart(2, "0")} · {question.prompt}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button type="button" onClick={goToNextQuestion}>
+                Next prompt
+              </button>
+            </div>
+
             <article className="prompt-block">
               <div className="meta">
                 <span>{categoryLabels[activeQuestion.category]}</span>
@@ -171,9 +211,6 @@ export function PracticeApp({
               </button>
               <button type="button" onClick={handleSave} disabled={!answer.trim()}>
                 Save attempt
-              </button>
-              <button type="button" onClick={goToNextQuestion}>
-                Next prompt
               </button>
               <button
                 type="button"

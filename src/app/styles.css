@@ -26,7 +26,8 @@ body {
 }
 
 button,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -39,6 +40,21 @@ button {
   padding: 0 13px;
   cursor: pointer;
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fffdfa;
+  color: var(--ink);
+  padding: 0 36px 0 12px;
+}
+
+select:focus {
+  outline: 3px solid rgba(47, 111, 94, 0.12);
+  border-color: var(--accent);
 }
 
 button:hover {
@@ -170,6 +186,25 @@ h1 {
   color: var(--accent);
 }
 
+.prompt-nav {
+  display: grid;
+  grid-template-columns: minmax(130px, auto) minmax(260px, 1fr) minmax(130px, auto);
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.question-picker {
+  display: grid;
+  gap: 6px;
+}
+
+.question-picker span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
 .actions button:first-child {
   background: var(--ink);
   border-color: var(--ink);
@@ -232,7 +267,7 @@ textarea:focus {
 
 .actions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  grid-template-columns: repeat(3, minmax(130px, 1fr));
   gap: 8px;
   margin-top: 14px;
 }
@@ -357,6 +392,15 @@ h2 {
     grid-template-columns: 1fr 1fr;
   }
 
+  .prompt-nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .question-picker {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
   .answer-grid {
     grid-template-columns: 1fr;
   }
@@ -370,6 +414,15 @@ h2 {
 
   .actions {
     grid-template-columns: 1fr;
+  }
+
+  .prompt-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .question-picker {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .section-head {
